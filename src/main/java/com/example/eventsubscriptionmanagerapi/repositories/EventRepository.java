@@ -7,5 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EventRepository extends CrudRepository<Event, UUID> {
-    public Optional<Event> findBySlug(String slug);
+    Optional<Event> findBySlug(String slug);
+
+    boolean existsByTitle(String title);
 }

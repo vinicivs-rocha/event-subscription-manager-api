@@ -1,7 +1,9 @@
 package com.example.eventsubscriptionmanagerapi.services;
 
 import com.example.eventsubscriptionmanagerapi.dtos.EventCreationDTO;
+import com.example.eventsubscriptionmanagerapi.exceptions.EventAlreadyExistsException;
 import com.example.eventsubscriptionmanagerapi.exceptions.EventNotFoundException;
+import com.example.eventsubscriptionmanagerapi.exceptions.InvalidEventDuration;
 import com.example.eventsubscriptionmanagerapi.models.Event;
 import com.example.eventsubscriptionmanagerapi.repositories.EventRepository;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class EventService {
     }
 
     public Event create(EventCreationDTO eventCreationDTO) {
+        if (eventRepository.existsByTitle(eventCreationDTO.title())) {
+            throw new EventAlreadyExistsException(String.format("Event with title %s already exists", eventCreationDTO.title()));
+        }
         Event event = Event.builder()
                 .title(eventCreationDTO.title())
                 .address(eventCreationDTO.address())
@@ -25,6 +30,9 @@ public class EventService {
                 .startsAt(LocalDate.parse(eventCreationDTO.startsAt()))
                 .endsAt(LocalDate.parse(eventCreationDTO.endsAt()))
                 .build();
+        if (event.getStartsAt().isAfter(event.getEndsAt())) {
+            throw new InvalidEventDuration("Event start date cannot be after end date");
+        }
         return eventRepository.save(event);
     }
 
