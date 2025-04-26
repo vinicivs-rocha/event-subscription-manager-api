@@ -5,6 +5,7 @@ import com.example.eventsubscriptionmanagerapi.dtos.EventCreationDTO;
 import com.example.eventsubscriptionmanagerapi.exceptions.EventAlreadyExistsException;
 import com.example.eventsubscriptionmanagerapi.exceptions.EventNotFoundException;
 import com.example.eventsubscriptionmanagerapi.exceptions.InvalidEventDuration;
+import com.example.eventsubscriptionmanagerapi.exceptions.InvalidEventPrice;
 import com.example.eventsubscriptionmanagerapi.models.Event;
 import com.example.eventsubscriptionmanagerapi.services.EventService;
 import org.springframework.http.HttpStatus;
@@ -28,14 +29,14 @@ public class EventsController {
             return ResponseEntity.ok(eventService.create(eventCreationDTO));
         } catch (EventAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
-        } catch (InvalidEventDuration e) {
+        } catch (InvalidEventDuration | InvalidEventPrice e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(e.getMessage()));
         }
     }
 
     @GetMapping
-    public List<Event> list() {
-        return eventService.list();
+    public ResponseEntity<List<Event>> list() {
+        return ResponseEntity.ok(eventService.list());
     }
 
     @GetMapping("/{slug}")
