@@ -71,7 +71,7 @@ class EventCreationIntegrationTests {
     }
 
     @Test
-    void shouldThrowInvalidEventDuration_whenCreatingEventWithInvalidDuration() {
+    void shouldThrowInvalidEventDuration_whenCreatingEventWithStartsAtBeingAfterEndsAt() {
         var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-02", "2023-10-01");
 
         var response = eventsController.create(invalidEventDto);
@@ -81,5 +81,29 @@ class EventCreationIntegrationTests {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(responseBody);
         assertEquals("Event start date cannot be after end date", responseBody.message());
+    }
+
+    @Test
+    void shouldThrowInvalidEventPrice_whenCreatingEventWithNegativePrice() {
+        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", -100F, "2023-10-01", "2023-10-02");
+
+        var response = eventsController.create(invalidEventDto);
+        var responseBody = (ErrorMessageDTO) response.getBody();
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(responseBody);
+        assertEquals("Event price must be greater than 0", responseBody.message());
+    }
+    
+    @Test
+    void shouldThrowInvalidEventPrice_whenCreatingEventWithZeroPrice() {
+        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", 0F, "2023-10-01", "2023-10-02");
+
+        var response = eventsController.create(invalidEventDto);
+        var responseBody = (ErrorMessageDTO) response.getBody();
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(responseBody);
+        assertEquals("Event price must be greater than 0", responseBody.message());
     }
 }
