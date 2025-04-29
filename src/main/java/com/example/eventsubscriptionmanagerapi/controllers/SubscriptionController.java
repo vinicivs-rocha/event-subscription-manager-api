@@ -28,7 +28,7 @@ public class SubscriptionController {
     public ResponseEntity<Object> create(@RequestBody SubscriptionCreationDTO subscriptionCreationDTO) {
         try {
             Subscription subscription = subscriptionService.create(subscriptionCreationDTO);
-            return ResponseEntity.ok(CreateSubscriptionPresenter.toHTTP(subscription));
+            return ResponseEntity.status(HttpStatus.CREATED).body(CreateSubscriptionPresenter.toHTTP(subscription));
         } catch (EventNotFoundException | IndicatorNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(e.getMessage()));
         } catch (SubscriptionAlreadyExistsException e) {
