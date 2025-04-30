@@ -115,7 +115,7 @@ class IndicationsRankingIntegrationTests {
             subscriptionRepository.save(Subscription.builder().subscriber(subscriber).event(event).indicator(thirdSubscriber).build());
         }
 
-        var ranking = subscriptionController.queryIndicationsRanking(eventRepository.findById(event.getId()).orElseThrow().getSlug());
+        var ranking = subscriptionController.queryIndicationsRanking(event.getSlug());
         @SuppressWarnings("unchecked") var responseBody = (List<IndicationRankingItemDTO>) ranking.getBody();
 
         assertEquals(HttpStatus.OK, ranking.getStatusCode());
