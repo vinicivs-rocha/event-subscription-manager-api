@@ -4,9 +4,11 @@ import com.example.eventsubscriptionmanagerapi.controllers.SubscriptionControlle
 import com.example.eventsubscriptionmanagerapi.dtos.ErrorMessageDTO;
 import com.example.eventsubscriptionmanagerapi.dtos.IndicatorRankingDTO;
 import com.example.eventsubscriptionmanagerapi.models.Event;
+import com.example.eventsubscriptionmanagerapi.models.IndicationAccess;
 import com.example.eventsubscriptionmanagerapi.models.Subscription;
 import com.example.eventsubscriptionmanagerapi.models.User;
 import com.example.eventsubscriptionmanagerapi.repositories.EventRepository;
+import com.example.eventsubscriptionmanagerapi.repositories.IndicationAccessRepository;
 import com.example.eventsubscriptionmanagerapi.repositories.SubscriptionRepository;
 import com.example.eventsubscriptionmanagerapi.repositories.UserRepository;
 import com.github.javafaker.Faker;
@@ -42,6 +44,8 @@ class IndicatorRankingIntegrationTests {
     private EventRepository eventRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private IndicationAccessRepository indicationAccessRepository;
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
@@ -110,13 +114,14 @@ class IndicatorRankingIntegrationTests {
                 .name(faker.name().fullName())
                 .email(faker.internet().emailAddress())
                 .build());
-        subscriptionRepository.save(Subscription.builder().subscriber(firstSubscriber).event(event).build());
+        var firstSubscription = subscriptionRepository.save(Subscription.builder().subscriber(firstSubscriber).event(event).build());
 
         for (int i = 0; i < 3; i++) {
             var subscriber = userRepository.save(User.builder()
                     .name(faker.name().fullName())
                     .email(faker.internet().emailAddress())
                     .build());
+            indicationAccessRepository.save(IndicationAccess.builder().event(event).indicator(firstSubscriber).subscription(firstSubscription).build());
             subscriptionRepository.save(Subscription.builder().subscriber(subscriber).event(event).indicator(firstSubscriber).build());
         }
 
@@ -124,13 +129,14 @@ class IndicatorRankingIntegrationTests {
                 .name(faker.name().fullName())
                 .email(faker.internet().emailAddress())
                 .build());
-        subscriptionRepository.save(Subscription.builder().subscriber(secondSubscriber).event(event).build());
+        var secondSubscription = subscriptionRepository.save(Subscription.builder().subscriber(secondSubscriber).event(event).build());
 
         for (int i = 0; i < 2; i++) {
             var subscriber = userRepository.save(User.builder()
                     .name(faker.name().fullName())
                     .email(faker.internet().emailAddress())
                     .build());
+            indicationAccessRepository.save(IndicationAccess.builder().event(event).indicator(secondSubscriber).subscription(secondSubscription).build());
             subscriptionRepository.save(Subscription.builder().subscriber(subscriber).event(event).indicator(secondSubscriber).build());
         }
 
@@ -138,13 +144,14 @@ class IndicatorRankingIntegrationTests {
                 .name(faker.name().fullName())
                 .email(faker.internet().emailAddress())
                 .build());
-        subscriptionRepository.save(Subscription.builder().subscriber(thirdSubscriber).event(event).build());
+        var thirdSubscription = subscriptionRepository.save(Subscription.builder().subscriber(thirdSubscriber).event(event).build());
 
         for (int i = 0; i < 1; i++) {
             var subscriber = userRepository.save(User.builder()
                     .name(faker.name().fullName())
                     .email(faker.internet().emailAddress())
                     .build());
+            indicationAccessRepository.save(IndicationAccess.builder().event(event).indicator(thirdSubscriber).subscription(thirdSubscription).build());
             subscriptionRepository.save(Subscription.builder().subscriber(subscriber).event(event).indicator(thirdSubscriber).build());
         }
 
@@ -154,6 +161,7 @@ class IndicatorRankingIntegrationTests {
         assertEquals(HttpStatus.OK, ranking.getStatusCode());
         assertNotNull(responseBody);
         assertEquals(3, responseBody.indicationsCount());
+        assertEquals(3, responseBody.accessCount());
         assertEquals(firstSubscriber.getId(), responseBody.indicatorId());
         assertEquals(firstSubscriber.getName(), responseBody.indicatorName());
         assertEquals(1, responseBody.indicatorRanking());

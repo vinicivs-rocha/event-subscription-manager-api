@@ -29,19 +29,25 @@ public interface SubscriptionRepository extends CrudRepository<Subscription, UUI
     List<IndicationRankingItemDTO> queryIndicationsRanking(@Param("eventId") UUID eventId);
 
     @Query(value = """
-        with "rankedIndicators" as ( \
-            select count(subscriptions.id) as "indicationsCount", \
-                   indicators.id as "indicatorId", \
-                   indicators.name as "indicatorName", \
-                   row_number() over (order by count(subscriptions.id) desc) as "indicatorRanking" \
-            from subscriptions \
-                     inner join users indicators on subscriptions.indicator_id = indicators.id \
-            where subscriptions.event_id = :eventId \
-            group by indicators.id \
-        ) \
-        select "indicationsCount", "indicatorId", "indicatorName", "indicatorRanking" \
-        from "rankedIndicators" \
-        where "indicatorId" = :indicatorId \
-        """, nativeQuery = true)
+            with "rankedIndicators" as ( \
+                select count(subscriptions.id) as "indicationsCount", \
+                       indicators.id as "indicatorId", \
+                       indicators.name as "indicatorName", \
+                       row_number() over (order by count(subscriptions.id) desc) as "indicatorRanking" \
+                from subscriptions \
+                         inner join users indicators on subscriptions.indicator_id = indicators.id \
+                where subscriptions.event_id = :eventId \
+                group by indicators.id \
+            ) \
+            select "indicationsCount", \
+                   (SELECT count(*) from indication_accesses "indicationAccesses" \
+                    where "indicationAccesses".event_id = :eventId \
+                      and "indicationAccesses".indicator_id = :indicatorId) as "accessCount", \
+                   "indicatorId", \
+                   "indicatorName", \
+                   "indicatorRanking" \
+            from "rankedIndicators" \
+            where "indicatorId" = :indicatorId \
+            """, nativeQuery = true)
     Optional<IndicatorRankingDTO> queryIndicatorRanking(@Param("eventId") UUID eventId, @Param("indicatorId") UUID indicatorId);
 }
