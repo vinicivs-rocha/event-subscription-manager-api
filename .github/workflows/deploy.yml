@@ -61,7 +61,7 @@ jobs:
               "image": {
                 "ownerId": "'"$RENDER_OWNER_ID"'",
                 "registryCredentialId": "'"$RENDER_REGISTRY_CREDENTIAL_ID"'",
-                "image": "'"$IMAGE"'"
+                "imagePath": "'"$IMAGE"'"
               }
             }"
           
