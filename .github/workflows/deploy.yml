@@ -49,15 +49,21 @@ jobs:
         env:
           RENDER_API_TOKEN: ${{ secrets.RENDER_API_TOKEN }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          RENDER_OWNER_ID: ${{ secrets.RENDER_OWNER_ID }}
+          RENDER_REGISTRY_CREDENTIAL_ID: ${{ secrets.RENDER_REGISTRY_CREDENTIAL_ID }}
         run: |
           IMAGE="ghcr.io/${{ github.repository }}:${TAG}"
-          
-          echo "{\"image\": {\"url\": \"$IMAGE\"}}"
-          
+                    
           curl -X PATCH https://api.render.com/v1/services/$RENDER_SERVICE_ID \
             -H "Authorization: Bearer $RENDER_API_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"image\": {\"url\": \"$IMAGE\"}}"
+            -d "{
+              "image": {
+                "ownerId": "'"$RENDER_OWNER_ID"'",
+                "registryCredentialId": "'"$RENDER_REGISTRY_CREDENTIAL_ID"'",
+                "image": "'"$IMAGE"'"
+              }
+            }"
           
           echo "Triggering deployment..."
           
