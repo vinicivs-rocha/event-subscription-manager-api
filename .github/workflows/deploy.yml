@@ -57,7 +57,7 @@ jobs:
           curl -X PATCH https://api.render.com/v1/services/$RENDER_SERVICE_ID \
             -H "Authorization: Bearer $RENDER_API_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{"image": {"url": "'"$IMAGE"'"}}'
+            -d "{\"image\": {\"url\": \"$IMAGE\"}}"
           
           echo "Triggering deployment..."
           
