@@ -3,10 +3,7 @@ package com.example.eventsubscriptionmanagerapi.services;
 import com.example.eventsubscriptionmanagerapi.dtos.IndicationRankingItemDTO;
 import com.example.eventsubscriptionmanagerapi.dtos.IndicatorRankingDTO;
 import com.example.eventsubscriptionmanagerapi.dtos.SubscriptionCreationDTO;
-import com.example.eventsubscriptionmanagerapi.exceptions.EventNotFoundException;
-import com.example.eventsubscriptionmanagerapi.exceptions.IndicatorNotFoundException;
-import com.example.eventsubscriptionmanagerapi.exceptions.NoIndicationFoundException;
-import com.example.eventsubscriptionmanagerapi.exceptions.SubscriptionAlreadyExistsException;
+import com.example.eventsubscriptionmanagerapi.exceptions.*;
 import com.example.eventsubscriptionmanagerapi.models.Event;
 import com.example.eventsubscriptionmanagerapi.models.Subscription;
 import com.example.eventsubscriptionmanagerapi.models.User;
@@ -55,5 +52,9 @@ public class SubscriptionService {
             throw new IndicatorNotFoundException(String.format("Indicator with id %s not found", indicatorId));
         }
         return subscriptionRepository.queryIndicatorRanking(event.getId(), indicatorId).orElseThrow(() -> new NoIndicationFoundException(String.format("User with id %s has no indication on the event with slug %s", indicatorId, eventSlug)));
+    }
+
+    public Subscription detailById(UUID id) {
+        return subscriptionRepository.findById(id).orElseThrow(() -> new SubscriptionNotFoundException(String.format("Subscription with id %s not found", id)));
     }
 }

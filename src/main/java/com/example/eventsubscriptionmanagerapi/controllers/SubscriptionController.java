@@ -3,10 +3,7 @@ package com.example.eventsubscriptionmanagerapi.controllers;
 import com.example.eventsubscriptionmanagerapi.CreateSubscriptionPresenter;
 import com.example.eventsubscriptionmanagerapi.dtos.ErrorMessageDTO;
 import com.example.eventsubscriptionmanagerapi.dtos.SubscriptionCreationDTO;
-import com.example.eventsubscriptionmanagerapi.exceptions.EventNotFoundException;
-import com.example.eventsubscriptionmanagerapi.exceptions.IndicatorNotFoundException;
-import com.example.eventsubscriptionmanagerapi.exceptions.NoIndicationFoundException;
-import com.example.eventsubscriptionmanagerapi.exceptions.SubscriptionAlreadyExistsException;
+import com.example.eventsubscriptionmanagerapi.exceptions.*;
 import com.example.eventsubscriptionmanagerapi.models.Subscription;
 import com.example.eventsubscriptionmanagerapi.services.SubscriptionService;
 import org.springframework.http.HttpStatus;
@@ -56,4 +53,12 @@ public class SubscriptionController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> detailById(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.ok(subscriptionService.detailById(id));
+        } catch (SubscriptionNotFoundException e) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(e.getMessage()));
+        }
+    }
 }
