@@ -1,4 +1,4 @@
 package com.example.eventsubscriptionmanagerapi.dtos;
 
-public record SubscriptionPublicDTO(String id, String designation) {
+public record SubscriptionPublicDTO(String id) {
 }
