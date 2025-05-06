@@ -1,6 +1,6 @@
 package com.example.eventsubscriptionmanagerapi.controllers;
 
-import com.example.eventsubscriptionmanagerapi.CreateSubscriptionPresenter;
+import com.example.eventsubscriptionmanagerapi.presenters.CreateSubscriptionPresenter;
 import com.example.eventsubscriptionmanagerapi.dtos.ErrorMessageDTO;
 import com.example.eventsubscriptionmanagerapi.dtos.SubscriptionCreationDTO;
 import com.example.eventsubscriptionmanagerapi.exceptions.*;
