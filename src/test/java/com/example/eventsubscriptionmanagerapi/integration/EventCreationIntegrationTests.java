@@ -47,7 +47,7 @@ class EventCreationIntegrationTests {
 
     @Test
     void shouldCreateEvent() {
-        var eventCreationDTO = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-01", "2023-10-02");
+        var eventCreationDTO = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-01", "2023-10-02", "Subscribe to this event");
 
         var createdEventResponse = eventsController.create(eventCreationDTO);
         var createdEvent = (Event) createdEventResponse.getBody();
@@ -58,9 +58,9 @@ class EventCreationIntegrationTests {
 
     @Test
     void shouldThrowAlreadyExistingTitle_whenCreatingEventWithExistingTitle() {
-        var originalEvent = Event.builder().title("Test Event").address("Test address").price(100F).startsAt(LocalDate.parse("2023-10-01")).endsAt(LocalDate.parse("2023-10-02")).build();
+        var originalEvent = Event.builder().title("Test Event").address("Test address").price(100F).startsAt(LocalDate.parse("2023-10-01")).endsAt(LocalDate.parse("2023-10-02")).advertisingContent("Subscribe to this event").build();
         eventRepository.save(originalEvent);
-        var duplicateTitleEventDto = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-01", "2023-10-02");
+        var duplicateTitleEventDto = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-01", "2023-10-02", "Subscribe to this event");
 
         var response = eventsController.create(duplicateTitleEventDto);
         var responseBody = (ErrorMessageDTO) response.getBody();
@@ -72,7 +72,7 @@ class EventCreationIntegrationTests {
 
     @Test
     void shouldThrowInvalidEventDuration_whenCreatingEventWithStartsAtBeingAfterEndsAt() {
-        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-02", "2023-10-01");
+        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-02", "2023-10-01", "Subscribe to this event");
 
         var response = eventsController.create(invalidEventDto);
         var responseBody = (ErrorMessageDTO) response.getBody();
@@ -85,7 +85,7 @@ class EventCreationIntegrationTests {
 
     @Test
     void shouldThrowInvalidEventPrice_whenCreatingEventWithNegativePrice() {
-        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", -100F, "2023-10-01", "2023-10-02");
+        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", -100F, "2023-10-01", "2023-10-02", "Subscribe to this event");
 
         var response = eventsController.create(invalidEventDto);
         var responseBody = (ErrorMessageDTO) response.getBody();
@@ -94,10 +94,10 @@ class EventCreationIntegrationTests {
         assertNotNull(responseBody);
         assertEquals("Event price must be greater than 0", responseBody.message());
     }
-    
+
     @Test
     void shouldThrowInvalidEventPrice_whenCreatingEventWithZeroPrice() {
-        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", 0F, "2023-10-01", "2023-10-02");
+        var invalidEventDto = new EventCreationDTO("Test Event", "This is a test event", 0F, "2023-10-01", "2023-10-02", "Subscribe to this event");
 
         var response = eventsController.create(invalidEventDto);
         var responseBody = (ErrorMessageDTO) response.getBody();

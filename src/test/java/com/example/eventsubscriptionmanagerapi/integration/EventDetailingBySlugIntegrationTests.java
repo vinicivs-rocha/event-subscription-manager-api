@@ -48,7 +48,7 @@ class EventDetailingBySlugIntegrationTests {
 
     @Test
     void shouldDetailEvent_whenThereIsAnEventWithTheSlug() {
-        var event = Event.builder().title("Code Commit 2024/02").address("Rua dos Bobos").price(100F).startsAt(LocalDate.now()).endsAt(LocalDate.now()).build();
+        var event = Event.builder().title("Code Commit 2024/02").address("Rua dos Bobos").price(100F).startsAt(LocalDate.now()).endsAt(LocalDate.now()).advertisingContent("Subscribe to this event").build();
         eventRepository.save(event);
 
         var response = eventsController.detailBySlug(event.getSlug());

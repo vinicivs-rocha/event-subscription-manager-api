@@ -51,7 +51,7 @@ class EventListingIntegrationTests {
 
     @Test
     void shouldListEvents_whenEventsExist() {
-        var eventCreationDTO = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-01", "2023-10-02");
+        var eventCreationDTO = new EventCreationDTO("Test Event", "This is a test event", 100F, "2023-10-01", "2023-10-02", "Subscribe to this event");
         eventsController.create(eventCreationDTO);
 
         var response = eventsController.list();

@@ -71,7 +71,7 @@ class SubscriptionDetailingByIdIntegrationTests {
     void shouldDetailSubscription() {
         var eventStartsAt = faker.date().future(10, java.util.concurrent.TimeUnit.DAYS);
         var eventsEndsAt = faker.date().future(20, java.util.concurrent.TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
+        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).advertisingContent(faker.company().catchPhrase()).build());
         var subscriber = userRepository.save(User.builder().name(faker.name().fullName()).email(faker.internet().emailAddress()).build());
         var subscription = subscriptionRepository.save(Subscription.builder().event(event).subscriber(subscriber).build());
 

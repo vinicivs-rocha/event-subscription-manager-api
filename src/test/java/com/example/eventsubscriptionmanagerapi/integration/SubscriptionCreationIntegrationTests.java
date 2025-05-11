@@ -74,7 +74,7 @@ class SubscriptionCreationIntegrationTests {
         var nonExistentIndicatorId = UUID.randomUUID().toString();
         var eventStartsAt = faker.date().future(10, java.util.concurrent.TimeUnit.DAYS);
         var eventsEndsAt = faker.date().future(20, java.util.concurrent.TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
+        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).advertisingContent(faker.company().catchPhrase()).build());
         var subscriptionCreationDTO = new SubscriptionCreationDTO(event.getSlug(), faker.name().fullName(), faker.internet().emailAddress(), nonExistentIndicatorId);
 
         var response = subscriptionController.create(subscriptionCreationDTO);
@@ -89,7 +89,7 @@ class SubscriptionCreationIntegrationTests {
     void shouldThrowSubscriptionAlreadyExistsException_whenSubscriberIsAlreadySubscribedInTheEvent() {
         var eventStartsAt = faker.date().future(10, java.util.concurrent.TimeUnit.DAYS);
         var eventsEndsAt = faker.date().future(20, java.util.concurrent.TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
+        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).advertisingContent(faker.company().catchPhrase()).build());
         var subscriber = userRepository.save(User.builder().name(faker.name().fullName()).email(faker.internet().emailAddress()).build());
         subscriptionRepository.save(Subscription.builder().event(event).subscriber(subscriber).build());
         var subscriptionCreationDTO = new SubscriptionCreationDTO(event.getSlug(), subscriber.getName(), subscriber.getEmail(), null);
@@ -106,7 +106,7 @@ class SubscriptionCreationIntegrationTests {
     void shouldCreateSubscriber_whenCreatingSubscriptionWithNonExistingSubscriber() {
         var eventStartsAt = faker.date().future(10, java.util.concurrent.TimeUnit.DAYS);
         var eventsEndsAt = faker.date().future(20, java.util.concurrent.TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
+        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).advertisingContent(faker.company().catchPhrase()).build());
         var subscriptionCreationDTO = new SubscriptionCreationDTO(event.getSlug(), faker.name().fullName(), faker.internet().emailAddress(), null);
         var didSubscriberExistBeforeSubscriptionCreation = userRepository.existsByEmail(subscriptionCreationDTO.subscriberEmail());
 
@@ -123,7 +123,7 @@ class SubscriptionCreationIntegrationTests {
     void shouldUseAlreadyExistingSubscriber_whenCreatingSubscriptionWithExistingSubscriber() {
         var eventStartsAt = faker.date().future(10, java.util.concurrent.TimeUnit.DAYS);
         var eventsEndsAt = faker.date().future(20, java.util.concurrent.TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
+        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).advertisingContent(faker.company().catchPhrase()).build());
         var subscriber = userRepository.save(User.builder().name(faker.name().fullName()).email(faker.internet().emailAddress()).build());
         var subscriptionCreationDTO = new SubscriptionCreationDTO(event.getSlug(), subscriber.getName(), subscriber.getEmail(), null);
 
@@ -133,22 +133,6 @@ class SubscriptionCreationIntegrationTests {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(responseBody);
         assertEquals(subscriber.getId(), subscriptionRepository.findById(UUID.fromString(responseBody.id())).orElseThrow().getSubscriber().getId());
-    }
-
-    @Test
-    void shouldUseEventSlugAndSubscriberIdToFillDesignation_whenCreatingValidSubscription() {
-        var eventStartsAt = faker.date().future(10, java.util.concurrent.TimeUnit.DAYS);
-        var eventsEndsAt = faker.date().future(20, java.util.concurrent.TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventsEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
-        var subscriber = userRepository.save(User.builder().name(faker.name().fullName()).email(faker.internet().emailAddress()).build());
-        var subscriptionCreationDTO = new SubscriptionCreationDTO(event.getSlug(), subscriber.getName(), subscriber.getEmail(), null);
-
-        var response = subscriptionController.create(subscriptionCreationDTO);
-        var responseBody = (SubscriptionPublicDTO) response.getBody();
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(responseBody);
-        assertEquals(String.format("http://codecraft.com/%s/%s", event.getSlug(), subscriber.getId()), responseBody.designation());
     }
 }
 

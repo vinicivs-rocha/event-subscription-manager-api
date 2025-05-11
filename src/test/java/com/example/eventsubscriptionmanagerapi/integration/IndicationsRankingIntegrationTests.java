@@ -72,7 +72,7 @@ class IndicationsRankingIntegrationTests {
     void shouldReturnIndicationsRanking() {
         var eventStartsAt = faker.date().future(10, TimeUnit.DAYS);
         var eventEndsAt = faker.date().future(10, TimeUnit.DAYS, eventStartsAt);
-        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).build());
+        var event = eventRepository.save(Event.builder().title(faker.name().title()).address(faker.address().fullAddress()).price((float) faker.number().randomDouble(1, 1, 1000)).startsAt(eventStartsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).endsAt(eventEndsAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).advertisingContent(faker.company().catchPhrase()).build());
         var firstSubscriber = userRepository.save(User.builder()
                 .name(faker.name().fullName())
                 .email(faker.internet().emailAddress())
