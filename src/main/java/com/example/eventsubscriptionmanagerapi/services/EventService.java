@@ -33,6 +33,7 @@ public class EventService {
                 .price(eventCreationDTO.price())
                 .startsAt(LocalDate.parse(eventCreationDTO.startsAt()))
                 .endsAt(LocalDate.parse(eventCreationDTO.endsAt()))
+                .advertisingContent(eventCreationDTO.advertisingContent())
                 .build();
         if (event.getStartsAt().isAfter(event.getEndsAt())) {
             throw new InvalidEventDuration("Event start date cannot be after end date");

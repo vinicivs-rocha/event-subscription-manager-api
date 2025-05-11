@@ -39,6 +39,9 @@ public class Event {
     @Column(nullable = false)
     private LocalDate endsAt;
 
+    @Column(nullable = false)
+    private String advertisingContent;
+
     @PrePersist
     private void fillSlug() {
         if (slug != null)
